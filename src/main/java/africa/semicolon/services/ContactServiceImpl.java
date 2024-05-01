@@ -12,10 +12,12 @@ import africa.semicolon.dtos.requests.EditContactRequest;
 import africa.semicolon.dtos.response.CreateContactResponse;
 import africa.semicolon.dtos.response.DeleteContactResponse;
 import africa.semicolon.dtos.response.EditContactResponse;
+import africa.semicolon.dtos.response.SuggestContactResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -138,7 +140,26 @@ public class ContactServiceImpl implements ContactService {
         if (!existingContact.getUserId().equals(user.getUserId())) {
             throw new BigContactException("You are not authorized to delete this contact");
         }
-
         return existingContact;
     }
+    public SuggestContactResponse suggestContactsByPhoneNumber(String phoneNumber) {
+        SuggestContactResponse suggestedContacts = new SuggestContactResponse();
+        Contact matchingContacts = contactRepository.findFirstByPhoneNumber(phoneNumber);
+            SuggestContactResponse response = new SuggestContactResponse();
+            response.setFirstName(matchingContacts.getFirstName());
+            response.setLastName(matchingContacts.getLastName());
+            response.setPhoneNumber(matchingContacts.getPhoneNumber());
+        return suggestedContacts;
+    }
+
+    public List<Contact> findContactsByPartialFirstName(String partialFirstName) {
+        return contactRepository.findByFirstNameRegex(".*" + partialFirstName + ".*");
+    }
+
+
+    public List<Contact> findContactsByPartialLastName(String partialLastName) {
+        return contactRepository.findByFirstNameRegex(".*" + partialLastName + ".*");
+    }
+
+
 }
