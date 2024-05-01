@@ -16,5 +16,5 @@ public interface ContactRepository extends MongoRepository<Contact, String> {
     Contact findFirstByPhoneNumber(String phoneNumber);
     List<Contact> findByFirstNameRegex(String partialFirstName);
     List<Contact> findByLastNameRegex(String partialLastName);
-
+    List<Contact> findByPhoneNumberRegex(String partialPhoneNumber);
 }

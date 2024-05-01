@@ -152,14 +152,44 @@ public class ContactServiceImpl implements ContactService {
         return suggestedContacts;
     }
 
-    public List<Contact> findContactsByPartialFirstName(String partialFirstName) {
-        return contactRepository.findByFirstNameRegex(".*" + partialFirstName + ".*");
+    @Override
+    public List<Contact> findContactsByPartialFirstName(String userId, String partialFirstName) {
+        User user = userRepository.findUserByUserId(userId);
+        if (user == null) {
+            throw new UserNotFoundException("User not found with ID: " + userId);
+        }
+        List<Contact> matchedContacts = contactRepository.findByFirstNameRegex(".*" + partialFirstName + ".*");
+        if (matchedContacts.isEmpty()) {
+            throw new BigContactException("No contacts found with partial first name: " + partialFirstName);
+        }
+        return matchedContacts;
     }
 
 
-    public List<Contact> findContactsByPartialLastName(String partialLastName) {
-        return contactRepository.findByFirstNameRegex(".*" + partialLastName + ".*");
-    }
 
+    public List<Contact> findContactsByPartialLastName(String userId,String partialLastName) {
+        User user = userRepository.findUserByUserId(userId);
+        if (user == null) {
+            throw new UserNotFoundException("User not found with ID: " + userId);
+        }
+
+        List<Contact> matchedContacts = contactRepository.findByLastNameRegex(".*" + partialLastName + ".*");
+        if (matchedContacts.isEmpty()) {
+            throw new BigContactException("No contacts found with partial last name: " + partialLastName);
+        }
+        return matchedContacts;
+
+    }
+    public List<Contact> findContactsByPartialPhoneNumber(String userId,String partialPhoneNumber) {
+        User user = userRepository.findUserByUserId(userId);
+        if (user == null) {
+            throw new UserNotFoundException("User not found with ID: " + userId);
+        }
+        List<Contact> matchedContacts = contactRepository.findByPhoneNumberRegex(".*" + partialPhoneNumber + ".*");
+        if (matchedContacts.isEmpty()) {
+            throw new BigContactException("No contacts found.");
+        }
+        return matchedContacts;
+    }
 
 }

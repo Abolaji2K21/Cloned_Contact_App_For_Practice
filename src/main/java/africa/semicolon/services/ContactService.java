@@ -24,7 +24,9 @@ public interface ContactService {
 
     List<Contact> getAllContactsByCategory(String userId, String category);
 
+    List<Contact> findContactsByPartialLastName(String userId,String partialLastName);
 
+    List<Contact> findContactsByPartialFirstName(String userId,String partialFirstName);
 
-
+    List<Contact> findContactsByPartialPhoneNumber(String userId,String partialPhoneNumber);
 }
