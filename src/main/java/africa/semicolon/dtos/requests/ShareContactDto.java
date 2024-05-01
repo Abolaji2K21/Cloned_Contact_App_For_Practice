@@ -1,15 +1,14 @@
-package africa.semicolon.services;
+package africa.semicolon.dtos.requests;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
-@Setter
-@Getter
+@Data
 public class ShareContactDto {
     private List<String> contactId;
-
     private String userId;
-    private String  author;
+    private String  username;
 }

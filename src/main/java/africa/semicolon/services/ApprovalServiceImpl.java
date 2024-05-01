@@ -6,6 +6,7 @@ import africa.semicolon.data.models.Status;
 import africa.semicolon.data.repositories.ApprovalRepository;
 import africa.semicolon.data.repositories.ContactRepository;
 import africa.semicolon.data.repositories.UserRepository;
+import africa.semicolon.dtos.requests.ShareContactDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,7 @@ public class ApprovalServiceImpl {
         }
         Approval approval = new Approval();
         approval.setStatus(Status.PENDING);
-        approval.setAuthor(shareContactDto.getAuthor());
+        approval.setAuthor(shareContactDto.getUsername());
         approval.setContactIds(shareContactDto.getContactId());
         approval.setUserId(shareContactDto.getUserId());
         approvalRepository.save(approval);

@@ -142,6 +142,7 @@ public class ContactServiceImpl implements ContactService {
         }
         return existingContact;
     }
+    @Override
     public SuggestContactResponse suggestContactsByPhoneNumber(String phoneNumber) {
         SuggestContactResponse suggestedContacts = new SuggestContactResponse();
         Contact matchingContacts = contactRepository.findFirstByPhoneNumber(phoneNumber);
@@ -166,7 +167,7 @@ public class ContactServiceImpl implements ContactService {
     }
 
 
-
+    @Override
     public List<Contact> findContactsByPartialLastName(String userId,String partialLastName) {
         User user = userRepository.findUserByUserId(userId);
         if (user == null) {
@@ -180,6 +181,7 @@ public class ContactServiceImpl implements ContactService {
         return matchedContacts;
 
     }
+    @Override
     public List<Contact> findContactsByPartialPhoneNumber(String userId,String partialPhoneNumber) {
         User user = userRepository.findUserByUserId(userId);
         if (user == null) {
