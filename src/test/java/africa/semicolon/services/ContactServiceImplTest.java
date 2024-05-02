@@ -1,21 +1,20 @@
 package africa.semicolon.services;
 
 import africa.semicolon.contactException.BigContactException;
+import africa.semicolon.contactException.ContactNotFoundException;
 import africa.semicolon.contactException.UserNotFoundException;
 import africa.semicolon.data.models.Contact;
 import africa.semicolon.data.models.User;
 import africa.semicolon.data.repositories.ContactRepository;
 import africa.semicolon.data.repositories.UserRepository;
 import africa.semicolon.dtos.requests.*;
-import africa.semicolon.dtos.response.CreateContactResponse;
-import africa.semicolon.dtos.response.DeleteContactResponse;
-import africa.semicolon.dtos.response.EditContactResponse;
-import africa.semicolon.dtos.response.RegisterUserResponse;
+import africa.semicolon.dtos.response.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -382,5 +381,97 @@ public class ContactServiceImplTest {
         assertThrows(UserNotFoundException.class, () -> contactService.getAllContactsByCategory("invalidUserId", "PenIsUpCategory"));
     }
 
+    @Test
+    void testSuggestContactsByPhoneNumber_ContactFound() {
+        String phoneNumber = "08165269244";
+        Contact contact = new Contact();
+        contact.setFirstName("PenisUp");
+        contact.setLastName("AndActive");
+        contact.setPhoneNumber(phoneNumber);
+        contactRepository.save(contact);
+
+        SuggestContactResponse response = contactService.suggestContactsByPhoneNumber(phoneNumber);
+
+        assertEquals("PenisUp", response.getFirstName());
+        assertEquals("AndActive", response.getLastName());
+        assertEquals(phoneNumber, response.getPhoneNumber());
+    }
+
+    @Test
+    void testSuggestContactsByPhoneNumber_ContactNotFound() {
+        String phoneNumber = "08165269244";
+
+        ContactNotFoundException exception = assertThrows(ContactNotFoundException.class,
+                () -> contactService.suggestContactsByPhoneNumber(phoneNumber));
+        assertEquals("Contact not found for phone number: " + phoneNumber, exception.getMessage());
+    }
+    @Test
+    void testSuggestContactsByPhoneNumber_EmptyPhoneNumber() {
+        String phoneNumber = "";
+        assertThrows(BigContactException.class,
+                () -> contactService.suggestContactsByPhoneNumber(phoneNumber));
+    }
+
+    @Test
+    void testSuggestContactsByPhoneNumber_NullPhoneNumber() {
+        assertThrows(BigContactException.class,
+                () -> contactService.suggestContactsByPhoneNumber(null));
+    }
+
+    @Test
+    void testFindContactsByPartialFirstName_UserNotFound() {
+        String userId = "invalidPenId";
+        String partialFirstName = "pen";
+
+        assertThrows(UserNotFoundException.class, () ->
+                contactService.findContactsByPartialFirstName(userId, partialFirstName));
+    }
+
+    @Test
+    void testFindContactsByPartialFirstName_NoMatchingContacts() {
+        String userId = "validPenId";
+        String partialFirstName = "Pen";
+        User user = new User();
+        user.setUserId(userId);
+        userRepository.save(user);
+
+        assertThrows(BigContactException.class, () ->
+                contactService.findContactsByPartialFirstName(userId, partialFirstName));
+    }
+
+    @Test
+    void testFindContactsByPartialFirstName_MatchingContactsFound() {
+        String userId = "validPenId";
+        String partialFirstName = "Pen";
+        User user = new User();
+        user.setUserId(userId);
+        userRepository.save(user);
+
+        List<Contact> contacts = new ArrayList<>();
+        Contact contact1 = new Contact();
+        contact1.setFirstName("PenIsUp");
+        contact1.setLastName("AndActive");
+        contacts.add(contact1);
+        contactRepository.save(contact1);
+
+
+        Contact contact2 = new Contact();
+        contact2.setFirstName("PenIsStillUp");
+        contact2.setLastName("AndActive");
+        contacts.add(contact2);
+        contactRepository.save(contact2);
+
+
+        Contact contact3 = new Contact();
+        contact3.setFirstName("PenIsDown");
+        contact3.setLastName("AndNotActive");
+        contacts.add(contact3);
+
+        contactRepository.save(contact3);
+
+        List<Contact> result = contactService.findContactsByPartialFirstName(userId, partialFirstName);
+        System.out.println(result);
+        assertEquals(3, result.size());
+    }
 
 }

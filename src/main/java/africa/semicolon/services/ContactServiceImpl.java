@@ -145,8 +145,9 @@ public class ContactServiceImpl implements ContactService {
     }
     @Override
     public SuggestContactResponse suggestContactsByPhoneNumber(String phoneNumber) {
-        Contact matchingContact = contactRepository.findFirstByPhoneNumber(phoneNumber);
+        validatePhoneNumber(phoneNumber);
 
+        Contact matchingContact = contactRepository.findFirstByPhoneNumber(phoneNumber);
         if (matchingContact == null) {
             throw new ContactNotFoundException("Contact not found for phone number: " + phoneNumber);
         }
@@ -155,7 +156,15 @@ public class ContactServiceImpl implements ContactService {
         response.setFirstName(matchingContact.getFirstName());
         response.setLastName(matchingContact.getLastName());
         response.setPhoneNumber(matchingContact.getPhoneNumber());
+
         return response;
+    }
+
+    private void validatePhoneNumber(String phoneNumber) {
+        if (phoneNumber == null || phoneNumber.isEmpty()) {
+            throw new BigContactException("Phone number cannot be empty or null");
+        }
+
     }
 
     @Override
