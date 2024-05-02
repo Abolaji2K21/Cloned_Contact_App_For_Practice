@@ -1,6 +1,7 @@
 package africa.semicolon.services;
 
 import africa.semicolon.contactException.BigContactException;
+import africa.semicolon.contactException.ContactNotFoundException;
 import africa.semicolon.contactException.UserNotFoundException;
 import africa.semicolon.data.models.Contact;
 import africa.semicolon.data.models.User;
@@ -144,13 +145,17 @@ public class ContactServiceImpl implements ContactService {
     }
     @Override
     public SuggestContactResponse suggestContactsByPhoneNumber(String phoneNumber) {
-        SuggestContactResponse suggestedContacts = new SuggestContactResponse();
-        Contact matchingContacts = contactRepository.findFirstByPhoneNumber(phoneNumber);
-            SuggestContactResponse response = new SuggestContactResponse();
-            response.setFirstName(matchingContacts.getFirstName());
-            response.setLastName(matchingContacts.getLastName());
-            response.setPhoneNumber(matchingContacts.getPhoneNumber());
-        return suggestedContacts;
+        Contact matchingContact = contactRepository.findFirstByPhoneNumber(phoneNumber);
+
+        if (matchingContact == null) {
+            throw new ContactNotFoundException("Contact not found for phone number: " + phoneNumber);
+        }
+
+        SuggestContactResponse response = new SuggestContactResponse();
+        response.setFirstName(matchingContact.getFirstName());
+        response.setLastName(matchingContact.getLastName());
+        response.setPhoneNumber(matchingContact.getPhoneNumber());
+        return response;
     }
 
     @Override
