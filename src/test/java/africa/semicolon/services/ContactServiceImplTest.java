@@ -419,6 +419,15 @@ public class ContactServiceImplTest {
     }
 
     @Test
+    void testFindContactsByPartialPhoneNumber_UserNotFound(){
+        String userId = "InvalidPenId";
+        String PartialPhoneNumber = "080";
+        assertThrows(UserNotFoundException.class, () ->
+                contactService.findContactsByPartialPhoneNumber(userId, PartialPhoneNumber));
+    }
+
+
+    @Test
     void testFindContactsByPartialFirstName_UserNotFound() {
         String userId = "invalidPenId";
         String partialFirstName = "pen";
@@ -426,6 +435,29 @@ public class ContactServiceImplTest {
         assertThrows(UserNotFoundException.class, () ->
                 contactService.findContactsByPartialFirstName(userId, partialFirstName));
     }
+
+    @Test
+    void testFindContactsByPartialLastName_UserNotFound() {
+        String userId = "invalidPenId";
+        String partialLastName = "pen";
+
+        assertThrows(UserNotFoundException.class, () ->
+                contactService.findContactsByPartialLastName(userId, partialLastName));
+    }
+
+    @Test
+    void testFindContactsByPartialPhoneNumber_NoMatchingContacts(){
+        String userId = "ValidPenId";
+        String partialPhoneNumber = "08065269244";
+        User user = new User();
+        user.setUserId(userId);
+        userRepository.save(user);
+
+
+        assertThrows(BigContactException.class, () ->
+                contactService.findContactsByPartialFirstName(userId, partialPhoneNumber));
+    }
+
 
     @Test
     void testFindContactsByPartialFirstName_NoMatchingContacts() {
@@ -438,6 +470,57 @@ public class ContactServiceImplTest {
         assertThrows(BigContactException.class, () ->
                 contactService.findContactsByPartialFirstName(userId, partialFirstName));
     }
+
+    @ Test
+    void testFindContactsByPartialLastName_NoMatchingContacts() {
+        String userId = "validPenId";
+        String partialLastName = "Pen";
+        User user = new User();
+        user.setUserId(userId);
+        userRepository.save(user);
+
+        assertThrows(BigContactException.class, () ->
+                contactService.findContactsByPartialFirstName(userId, partialLastName));
+    }
+
+    @Test
+    void testFindContactsByPartialPhoneNumber_MatchingContacts(){
+        String userId = "ValidPenId";
+        String partialPhoneNumber = "08065";
+        User user = new User();
+        user.setUserId(userId);
+        userRepository.save(user);
+
+        List<Contact> contacts = new ArrayList<>();
+        Contact contact1 = new Contact();
+        contact1.setFirstName("PenIsUp");
+        contact1.setLastName("AndActive");
+        contact1.setPhoneNumber("08065269246");
+        contacts.add(contact1);
+        contactRepository.save(contact1);
+
+
+        Contact contact2 = new Contact();
+        contact2.setFirstName("PenIsStillUp");
+        contact2.setLastName("AndActive");
+        contact2.setPhoneNumber("08065269245");
+        contacts.add(contact2);
+        contactRepository.save(contact2);
+
+
+        Contact contact3 = new Contact();
+        contact3.setFirstName("PenIsDown");
+        contact3.setLastName("AndNotActive");
+        contact3.setPhoneNumber("08065269244");
+        contacts.add(contact3);
+
+        contactRepository.save(contact3);
+
+        List<Contact> result = contactService.findContactsByPartialPhoneNumber(userId, partialPhoneNumber);
+        System.out.println(result);
+        assertEquals(3, result.size());
+    }
+
 
     @Test
     void testFindContactsByPartialFirstName_MatchingContactsFound() {
@@ -472,6 +555,41 @@ public class ContactServiceImplTest {
         List<Contact> result = contactService.findContactsByPartialFirstName(userId, partialFirstName);
         System.out.println(result);
         assertEquals(3, result.size());
+    }
+
+    @Test
+    void testFindContactsByPartialLastName_MatchingContactsFound() {
+        String userId = "validPenId";
+        String partialLastName = "And";
+        User user = new User();
+        user.setUserId(userId);
+        userRepository.save(user);
+
+        List<Contact> contacts = new ArrayList<>();
+        Contact contact1 = new Contact();
+        contact1.setFirstName("PenIsUp");
+        contact1.setLastName("AndActive");
+        contacts.add(contact1);
+        contactRepository.save(contact1);
+
+
+        Contact contact2 = new Contact();
+        contact2.setFirstName("PenIsStillUp");
+        contact2.setLastName("AndActive");
+        contacts.add(contact2);
+        contactRepository.save(contact2);
+
+
+        Contact contact3 = new Contact();
+        contact3.setFirstName("PenIsDown");
+        contact3.setLastName("AndNotActive");
+        contacts.add(contact3);
+
+        contactRepository.save(contact3);
+
+        List<Contact> result = contactService.findContactsByPartialLastName(userId, partialLastName);
+        System.out.println(result);
+         assertEquals(3, result.size());
     }
 
 }

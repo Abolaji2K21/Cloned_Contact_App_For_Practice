@@ -1,6 +1,7 @@
 package africa.semicolon.data.models;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@Document("Contacts")
+@RequiredArgsConstructor
 public class Approval {
 
     @Id
@@ -17,8 +18,9 @@ public class Approval {
     private List<String> contactIds;
     private String userId;
     private Status status;
-    private String author;
+    private String username;
 
     private LocalDateTime dateTimeCreated;
     private LocalDateTime dateTimeUpdated;
+
 }

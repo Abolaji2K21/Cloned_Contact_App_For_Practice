@@ -1,5 +1,6 @@
 package africa.semicolon.services;
 
+import africa.semicolon.contactException.BigContactException;
 import africa.semicolon.data.models.Approval;
 import africa.semicolon.data.models.Contact;
 import africa.semicolon.data.models.Status;
@@ -7,51 +8,61 @@ import africa.semicolon.data.repositories.ApprovalRepository;
 import africa.semicolon.data.repositories.ContactRepository;
 import africa.semicolon.data.repositories.UserRepository;
 import africa.semicolon.dtos.requests.ShareContactDto;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-public class ApprovalServiceImpl {
+public class ApprovalServiceImpl implements ApprovalService {
 
-    private final ApprovalRepository approvalRepository;
-    private final UserRepository userRepository;
-    private final ContactRepository contactRepository;
+    @Autowired
+    private ApprovalRepository approvalRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ContactRepository contactRepository;
 
+    @Override
     public void share(ShareContactDto shareContactDto) {
         if (!userRepository.existsById(shareContactDto.getUserId())) {
-            throw new RuntimeException("user does not exist");
+            throw new BigContactException("user does not exist");
         }
         Approval approval = new Approval();
         approval.setStatus(Status.PENDING);
-        approval.setAuthor(shareContactDto.getUsername());
+        approval.setUsername(shareContactDto.getUsername());
         approval.setContactIds(shareContactDto.getContactId());
         approval.setUserId(shareContactDto.getUserId());
         approvalRepository.save(approval);
     }
 
+    @Override
     public List<Approval> getApprovals(String userId) {
         return approvalRepository.findByUserId(userId);
     }
 
+
+    @Override
     public void changeStatus(Status status, String approvalId, String userId) {
-        Approval approval = approvalRepository.findByApprovalIdAndUserId(approvalId, userId).orElseThrow(() -> new RuntimeException());
+        Approval approval = approvalRepository.findByApprovalIdAndUserId(approvalId, userId)
+                .orElseThrow(() -> new BigContactException("Approval not found for this user"));
+
         if (status.equals(Status.APPROVED)) {
-            for (String id : approval.getContactIds()) {
-                Contact contact = contactRepository.findById(id).get();
+            List<String> contactIds = approval.getContactIds();
+            for (int count = 0; count < contactIds.size(); count++) {
+                String id = contactIds.get(count);
+                Contact contact = contactRepository.findById(id)
+                        .orElseThrow(() -> new BigContactException("Contact does not exist"));
                 Contact newContact = new Contact();
                 newContact.setUsername(contact.getUsername());
                 newContact.setFirstName(contact.getFirstName());
                 newContact.setLastName(contact.getLastName());
                 newContact.setUserId(approval.getUserId());
                 contactRepository.save(newContact);
-                approval.setStatus(status);
             }
-        } else {
-            approval.setStatus(status);
         }
+        approval.setStatus(status);
         approvalRepository.save(approval);
     }
+
 }
