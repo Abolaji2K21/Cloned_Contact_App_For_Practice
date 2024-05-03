@@ -1,16 +1,14 @@
 package africa.semicolon.controller;
 
 import africa.semicolon.contactException.BigContactException;
+import africa.semicolon.contactException.ContactNotFoundException;
 import africa.semicolon.contactException.UserNotFoundException;
 import africa.semicolon.data.models.Contact;
 import africa.semicolon.data.repositories.ContactRepository;
 import africa.semicolon.dtos.requests.CreateContactRequest;
 import africa.semicolon.dtos.requests.DeleteContactRequest;
 import africa.semicolon.dtos.requests.EditContactRequest;
-import africa.semicolon.dtos.response.ApiResponse;
-import africa.semicolon.dtos.response.CreateContactResponse;
-import africa.semicolon.dtos.response.DeleteContactResponse;
-import africa.semicolon.dtos.response.EditContactResponse;
+import africa.semicolon.dtos.response.*;
 import africa.semicolon.services.ContactService;
 import africa.semicolon.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +80,17 @@ public class ContactController {
             return new ResponseEntity<>(new ApiResponse(false, message.getMessage()),BAD_REQUEST);
         }
     }
+
+    @GetMapping("/suggest/{phoneNumber}")
+    public ResponseEntity<?> suggestContactsByPhoneNumber(@PathVariable String phoneNumber) {
+        try {
+            SuggestContactResponse result = contactService.suggestContactsByPhoneNumber(phoneNumber);
+            return new ResponseEntity<>(new ApiResponse(true, result),OK);
+        } catch (BigContactException message) {
+            return new ResponseEntity<>(new ApiResponse(false, message.getMessage()),BAD_REQUEST);
+        }
+    }
+
 
     @GetMapping("/partialFirstName/{userId}/{partialFirstName}")
     public ResponseEntity<?> findContactsByPartialFirstName(@PathVariable (name = "userId")String userId, @PathVariable(name = "partialFirstName") String partialFirstName) {
