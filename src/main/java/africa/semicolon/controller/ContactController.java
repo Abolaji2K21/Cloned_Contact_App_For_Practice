@@ -1,6 +1,7 @@
 package africa.semicolon.controller;
 
 import africa.semicolon.contactException.BigContactException;
+import africa.semicolon.contactException.UserNotFoundException;
 import africa.semicolon.data.models.Contact;
 import africa.semicolon.data.repositories.ContactRepository;
 import africa.semicolon.dtos.requests.CreateContactRequest;
@@ -28,8 +29,7 @@ public class ContactController {
 
     @Autowired
     private ContactService contactService;
-    @Autowired
-    private UserService userService;
+
 
     @PostMapping("/create")
     public ResponseEntity<?> createContact(@RequestBody CreateContactRequest createContactRequest) {
@@ -77,13 +77,42 @@ public class ContactController {
     public ResponseEntity<?> getAllContactsByCategory(@PathVariable(name = "userId")String userId, @PathVariable(name = "category") String category) {
         try {
             List<Contact> result = contactService.getAllContactsByCategory(userId, category);
-//            return !result.isEmpty() ?
                     return new ResponseEntity<>(new ApiResponse(true, result),OK);
-//                    new ResponseEntity<>(new ApiResponse(false, "No contacts found for the given category"), NOT_FOUND);
         } catch (BigContactException message) {
             return new ResponseEntity<>(new ApiResponse(false, message.getMessage()),BAD_REQUEST);
         }
     }
+
+    @GetMapping("/partialFirstName/{userId}/{partialFirstName}")
+    public ResponseEntity<?> findContactsByPartialFirstName(@PathVariable (name = "userId")String userId, @PathVariable(name = "partialFirstName") String partialFirstName) {
+        try {
+            List<Contact> result = contactService.findContactsByPartialFirstName(userId, partialFirstName);
+            return new ResponseEntity<>(new ApiResponse(true, result),OK);
+        } catch (BigContactException message) {
+            return new ResponseEntity<>(new ApiResponse(false, message.getMessage()),BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/partialLastName/{userId}/{partialLastName}")
+    public ResponseEntity<?> findContactsByPartialLastName(@PathVariable(name = "userId") String userId, @PathVariable(name = "partialLastName") String partialLastName) {
+        try {
+            List<Contact> result = contactService.findContactsByPartialLastName(userId, partialLastName);
+            return new ResponseEntity<>(new ApiResponse(true, result),OK);
+        } catch (BigContactException message) {
+            return new ResponseEntity<>(new ApiResponse(false, message.getMessage()),BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/partialPhoneNumber/{userId}/{phoneNumber}")
+    public ResponseEntity<?> findContactsByPartialPhoneNumber(@PathVariable (name = "userId")String userId, @PathVariable(name = "phoneNumber") String partialPhoneNumber) {
+        try {
+            List<Contact> result = contactService.findContactsByPartialPhoneNumber(userId, partialPhoneNumber);
+            return new ResponseEntity<>(new ApiResponse(true, result),OK);
+        } catch (BigContactException message) {
+            return new ResponseEntity<>(new ApiResponse(false, message.getMessage()),BAD_REQUEST);
+        }
+    }
+
 
 
 }
