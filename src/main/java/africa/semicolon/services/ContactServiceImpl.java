@@ -60,7 +60,7 @@ public class ContactServiceImpl implements ContactService {
     public User findUserBy(String userId) {
         User user = userRepository.findUserByUserId(userId);
         if (user == null) {
-            throw new UserNotFoundException("User not found with ID: " + userId);
+            throw new UserNotFoundException("User not found");
         }
         return user;
     }
@@ -79,7 +79,7 @@ public class ContactServiceImpl implements ContactService {
     public Optional<Contact> getAllContactsByUserId(String userId) {
         User user = userRepository.findUserByUserId(userId);
         if (user == null) {
-            throw new UserNotFoundException("User not found with ID: " + userId);
+            throw new UserNotFoundException("User not found ");
         }
         return contactRepository.findByUserId(userId);
     }
@@ -88,7 +88,7 @@ public class ContactServiceImpl implements ContactService {
     public List<Contact> getAllContactsByCategory(String userId,String category) {
         User user = userRepository.findUserByUserId(userId);
         if (user == null) {
-            throw new UserNotFoundException("User not found with ID: " + userId);
+            throw new UserNotFoundException("User not found ");
         }
         return contactRepository.findAllByUserIdAndCategory(userId,category);
     }
@@ -111,11 +111,11 @@ public class ContactServiceImpl implements ContactService {
 
     private void checkUserStatus(String username) {
         if (!userService.isUserRegistered(username)) {
-            throw new BigContactException("User with username " + username + " is not registered");
+            throw new BigContactException("User not registered");
         }
 
         if (!userService.isUserLoggedIn(username)) {
-            throw new BigContactException("User with username " + username + " is not logged in");
+            throw new BigContactException("User not logged in");
         }
     }
 
@@ -176,7 +176,7 @@ public class ContactServiceImpl implements ContactService {
     public List<Contact> findContactsByPartialFirstName(String userId, String partialFirstName) {
         User user = userRepository.findUserByUserId(userId);
         if (user == null) {
-            throw new UserNotFoundException("User not found with ID: " + userId);
+            throw new UserNotFoundException("User not found");
         }
         List<Contact> matchedContacts = contactRepository.findByFirstNameRegex(".*" + partialFirstName + ".*");
         if (matchedContacts.isEmpty()) {
@@ -190,7 +190,7 @@ public class ContactServiceImpl implements ContactService {
     public List<Contact> findContactsByPartialLastName(String userId,String partialLastName) {
         User user = userRepository.findUserByUserId(userId);
         if (user == null) {
-            throw new UserNotFoundException("User not found with ID: " + userId);
+            throw new UserNotFoundException("User not found ");
         }
 
         List<Contact> matchedContacts = contactRepository.findByLastNameRegex(".*" + partialLastName + ".*");
@@ -204,7 +204,7 @@ public class ContactServiceImpl implements ContactService {
     public List<Contact> findContactsByPartialPhoneNumber(String userId,String partialPhoneNumber) {
         User user = userRepository.findUserByUserId(userId);
         if (user == null) {
-            throw new UserNotFoundException("User not found with ID: " + userId);
+            throw new UserNotFoundException("User not found ");
         }
         List<Contact> matchedContacts = contactRepository.findByPhoneNumberRegex(".*" + partialPhoneNumber + ".*");
         if (matchedContacts.isEmpty()) {
