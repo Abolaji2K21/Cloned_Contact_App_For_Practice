@@ -100,7 +100,9 @@ public class ContactServiceImpl implements ContactService {
             throw new BigContactException("Username cannot be null or empty");
         }
         String phoneNumber = createContactRequest.getPhoneNumber();
-
+        if (!phoneNumber.matches("^(0|234|\\+234)?[7-9][0-1]\\d{8}$")){
+            throw new BigContactException("Invalid phone number format");
+        }
         boolean contactExistsByPhoneNumber = contactRepository.existsByPhoneNumber(phoneNumber);
         if (contactExistsByPhoneNumber) {
             throw new BigContactException("Contact already exists");
@@ -163,7 +165,8 @@ public class ContactServiceImpl implements ContactService {
     private void validatePhoneNumber(String phoneNumber) {
         if (phoneNumber == null || phoneNumber.isEmpty()) {
             throw new BigContactException("Phone number cannot be empty or null");
-        } else if (!phoneNumber.matches("^(0|234|\\+234)?[7-9][0-1]\\d{8}$")){
+        }
+        if (!phoneNumber.matches("^(0|234|\\+234)?[7-9][0-1]\\d{8}$")){
             throw new BigContactException("Invalid phone number format");
         }
     }
