@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
         String username = logoutUserRequest.getUsername().toLowerCase();
         User user = findUserBy(username);
         if (user == null) {
-            throw new UserNotFoundException("User with username " + username + " not found");
+            throw new UserNotFoundException("User not found");
         } else {
             user.setLoggedIn(false);
             userRepository.save(user);
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
     public UpdateUserResponse updateUserProfile(UpdateUserRequest request) {
         String userId = request.getUserId();
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         user.setFirstName(request.getFirstname());
         user.setLastName(request.getLastname());

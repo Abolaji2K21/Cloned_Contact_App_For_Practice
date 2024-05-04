@@ -163,9 +163,11 @@ public class ContactServiceImpl implements ContactService {
     private void validatePhoneNumber(String phoneNumber) {
         if (phoneNumber == null || phoneNumber.isEmpty()) {
             throw new BigContactException("Phone number cannot be empty or null");
+        } else if (!phoneNumber.matches("^(0|234|\\+234)?[7-9][0-1]\\d{8}$")){
+            throw new BigContactException("Invalid phone number format");
         }
-
     }
+
 
     @Override
     public List<Contact> findContactsByPartialFirstName(String userId, String partialFirstName) {
