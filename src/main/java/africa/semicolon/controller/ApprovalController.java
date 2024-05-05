@@ -3,6 +3,7 @@ package africa.semicolon.controller;
 import africa.semicolon.contactException.BigContactException;
 import africa.semicolon.data.models.Approval;
 import africa.semicolon.data.models.Status;
+import africa.semicolon.dtos.requests.ChangeStatusRequestDTO;
 import africa.semicolon.dtos.requests.ShareContactDto;
 import africa.semicolon.dtos.response.ApiResponse;
 import africa.semicolon.dtos.response.ChangeStatusResponseDTO;
@@ -41,13 +42,14 @@ public class ApprovalController {
         return new ResponseEntity<>(new ApiResponse(true,  result),OK);
     }
 
-    @PostMapping("/changeStatus/{approvalId}/{userId}/{status}")
-    public ResponseEntity<?> changeStatus(@PathVariable (name = "approvalId") String approvalId, @PathVariable(name = "userId") String userId, @PathVariable(name = "status") Status status) {
+    @PostMapping("/changeStatus")
+    public ResponseEntity<?> changeStatus(@RequestBody ChangeStatusRequestDTO request) {
         try {
-            ChangeStatusResponseDTO result  =approvalService.changeStatus(status, approvalId, userId);
-            return new ResponseEntity<>(new ApiResponse(true,  result),OK);
+            ChangeStatusResponseDTO result = approvalService.changeStatus(request);
+            return new ResponseEntity<>(new ApiResponse(true, result), HttpStatus.OK);
         } catch (BigContactException message) {
-            return new ResponseEntity<>(new ApiResponse(false, message.getMessage()),BAD_REQUEST);
+            return new ResponseEntity<>(new ApiResponse(false, message.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
+
 }

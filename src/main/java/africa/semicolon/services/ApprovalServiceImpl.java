@@ -7,6 +7,7 @@ import africa.semicolon.data.models.Status;
 import africa.semicolon.data.repositories.ApprovalRepository;
 import africa.semicolon.data.repositories.ContactRepository;
 import africa.semicolon.data.repositories.UserRepository;
+import africa.semicolon.dtos.requests.ChangeStatusRequestDTO;
 import africa.semicolon.dtos.requests.ShareContactDto;
 import africa.semicolon.dtos.response.ChangeStatusResponseDTO;
 import africa.semicolon.dtos.response.ShareContactDtoResponse;
@@ -54,11 +55,11 @@ public class ApprovalServiceImpl implements ApprovalService {
 
 
     @Override
-    public ChangeStatusResponseDTO changeStatus(Status status, String approvalId, String userId) {
-        Approval approval = approvalRepository.findByApprovalIdAndUserId(approvalId, userId)
+    public ChangeStatusResponseDTO changeStatus(ChangeStatusRequestDTO request) {
+        Approval approval = approvalRepository.findByApprovalIdAndUserId(request.getApprovalId(),request.getUserId())
                 .orElseThrow(() -> new BigContactException("Approval not found for this user"));
 
-        if (status.equals(Status.APPROVED)) {
+        if (request.getStatus() == Status.APPROVED) {
             List<String> contactIds = approval.getContactIds();
             for (int count = 0; count < contactIds.size(); count++) {
                 String id = contactIds.get(count);
@@ -72,7 +73,7 @@ public class ApprovalServiceImpl implements ApprovalService {
                 contactRepository.save(newContact);
             }
         }
-        approval.setStatus(status);
+        approval.setStatus(request.getStatus());
         approvalRepository.save(approval);
         ChangeStatusResponseDTO statusResponseDTO = new ChangeStatusResponseDTO();
         statusResponseDTO.setNewStatus(approval.getStatus());
