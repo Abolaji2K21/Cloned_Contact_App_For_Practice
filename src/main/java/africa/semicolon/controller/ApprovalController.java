@@ -41,8 +41,8 @@ public class ApprovalController {
         return new ResponseEntity<>(new ApiResponse(true,  result),OK);
     }
 
-    @PostMapping("/changeStatus/{approvalId}/{userId}")
-    public ResponseEntity<?> changeStatus(@PathVariable String approvalId, @PathVariable String userId, @RequestParam Status status) {
+    @PostMapping("/changeStatus/{approvalId}/{userId}/{status}")
+    public ResponseEntity<?> changeStatus(@PathVariable (name = "approvalId") String approvalId, @PathVariable(name = "userId") String userId, @PathVariable(name = "status") Status status) {
         try {
             ChangeStatusResponseDTO result  =approvalService.changeStatus(status, approvalId, userId);
             return new ResponseEntity<>(new ApiResponse(true,  result),OK);

@@ -20,7 +20,7 @@ public class Approval {
     private Status status;
     private String username;
 
-    private LocalDateTime dateTimeCreated;
-    private LocalDateTime dateTimeUpdated;
+    private LocalDateTime dateTimeCreated = LocalDateTime.now();
+//    private LocalDateTime dateTimeUpdated;
 
 }
