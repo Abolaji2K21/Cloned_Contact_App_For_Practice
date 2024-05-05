@@ -19,8 +19,6 @@ public class Contact {
     private String lastName;
     private String phoneNumber;
     private String category;
-
     private LocalDateTime dateTimeCreated;
-    private LocalDateTime dateTimeUpdated;
 }
 

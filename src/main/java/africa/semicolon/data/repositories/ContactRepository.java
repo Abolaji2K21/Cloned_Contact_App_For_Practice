@@ -12,7 +12,7 @@ public interface ContactRepository extends MongoRepository<Contact, String> {
     Boolean existsByPhoneNumber(String phoneNumber);
     Contact findContactByContactIdAndUserId(String contactId, String userId);
     List<Contact> findAllByUserIdAndCategory(String userId, String category);
-    Optional<Contact> findByUserId(String userId);
+    List<Contact> findByUserId(String userId);
     Contact findFirstByPhoneNumber(String phoneNumber);
     List<Contact> findByFirstNameRegex(String partialFirstName);
     List<Contact> findByLastNameRegex(String partialLastName);

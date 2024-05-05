@@ -12,6 +12,7 @@ import africa.semicolon.services.UserService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class Mapper {
     public static User map(RegisterUserRequest registerUserRequest) {
@@ -59,7 +60,7 @@ public class Mapper {
         response.setLastName(updatedContact.getLastName());
         response.setPhoneNumber(updatedContact.getPhoneNumber());
         response.setCategory(updatedContact.getCategory());
-        response.setDateUpdated(updatedContact.getDateTimeUpdated().toString());
+        response.setDateUpdated(String.valueOf(new Date()));
         return response;
     }
     public static void mapEdit(EditContactRequest editContactRequest, Contact existingContact) {
@@ -67,14 +68,12 @@ public class Mapper {
         existingContact.setFirstName(editContactRequest.getFirstname());
         existingContact.setLastName(editContactRequest.getLastname());
         existingContact.setCategory(editContactRequest.getCategory());
-        existingContact.setDateTimeUpdated(LocalDateTime.now());
     }
     public static DeleteContactResponse mapDeleteContactResponse(Contact existingContact, String username) {
         DeleteContactResponse response = new DeleteContactResponse();
         response.setContactId(existingContact.getContactId());
         response.setDeleted(true);
         response.setUsername(username);
-
         return response;
     }
 

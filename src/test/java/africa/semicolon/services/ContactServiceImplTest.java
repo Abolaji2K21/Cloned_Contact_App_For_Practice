@@ -313,9 +313,8 @@ public class ContactServiceImplTest {
         createContactRequest.setUserId(userResponse.getUserId());
         contactService.createContactForUser(createContactRequest);
 
-        Optional<Contact> contacts = contactService.getAllContactsByUserId(userResponse.getUserId());
-        assertTrue(contacts.isPresent());
-//        assertEquals(1, contacts.get().);
+        List<Contact> contacts = contactService.getAllContactsByUserId(userResponse.getUserId());
+        assertEquals(1, contacts.size());
     }
 
     @Test
@@ -327,7 +326,7 @@ public class ContactServiceImplTest {
         registerRequest.setPassword("Holes");
         RegisterUserResponse userResponse = userService.register(registerRequest);
 
-        Optional<Contact> contacts = contactService.getAllContactsByUserId(userResponse.getUserId());
+        List<Contact> contacts = contactService.getAllContactsByUserId(userResponse.getUserId());
         assertTrue(contacts.isEmpty());
     }
 

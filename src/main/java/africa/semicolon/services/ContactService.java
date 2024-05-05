@@ -21,7 +21,7 @@ public interface ContactService {
     User findUserBy(String username);
 
     DeleteContactResponse deleteContactForUser(DeleteContactRequest deleteContactRequest);
-    Optional<Contact> getAllContactsByUserId(String userId);
+    List<Contact> getAllContactsByUserId(String userId);
     List<Contact> getAllContactsByCategory(String userId, String category);
     SuggestContactResponse suggestContactsByPhoneNumber(String phoneNumber);
     List<Contact> findContactsByPartialLastName(String userId,String partialLastName);

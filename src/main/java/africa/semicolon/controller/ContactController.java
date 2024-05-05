@@ -63,8 +63,8 @@ public class ContactController {
     @GetMapping("/getAllByUserId/{userId}")
     public ResponseEntity<?> getAllContactsByUserId(@PathVariable(name = "userId") String userId) {
         try {
-            Optional<Contact> result = contactService.getAllContactsByUserId(userId);
-                   return new ResponseEntity<>(new ApiResponse(true, result.get()), OK);
+            List<Contact> result = contactService.getAllContactsByUserId(userId);
+                   return new ResponseEntity<>(new ApiResponse(true, result), OK);
 //                    new ResponseEntity<>(new ApiResponse(false, "No contacts found"), NOT_FOUND);
         } catch (BigContactException message) {
             return new ResponseEntity<>(new ApiResponse(false, message.getMessage()), HttpStatus.BAD_REQUEST);
@@ -82,7 +82,7 @@ public class ContactController {
     }
 
     @GetMapping("/suggest/{phoneNumber}")
-    public ResponseEntity<?> suggestContactsByPhoneNumber(@PathVariable String phoneNumber) {
+    public ResponseEntity<?> suggestContactsByPhoneNumber(@PathVariable(name = "phoneNumber") String phoneNumber) {
         try {
             SuggestContactResponse result = contactService.suggestContactsByPhoneNumber(phoneNumber);
             return new ResponseEntity<>(new ApiResponse(true, result),OK);
