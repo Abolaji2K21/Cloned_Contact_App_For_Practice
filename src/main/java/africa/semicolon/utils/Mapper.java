@@ -21,6 +21,7 @@ public class Mapper {
         user.setLastName(registerUserRequest.getLastname());
         user.setPassword(registerUserRequest.getPassword());
         user.setUsername(registerUserRequest.getUsername());
+
         return user;
     }
 

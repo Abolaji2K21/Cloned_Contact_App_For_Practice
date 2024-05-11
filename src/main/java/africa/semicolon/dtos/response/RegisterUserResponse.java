@@ -8,5 +8,6 @@ public class RegisterUserResponse {
     private String username;
     private String dateRegistered;
     private boolean loggedIn;
+    private String message;
 
 }
